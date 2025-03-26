@@ -447,7 +447,7 @@ def generate_transcript_summary(transcript):
     """
     try:
         # Initialize the Gemini API client with your API key
-        client = genai.Client(api_key="")
+        client = genai.Client(api_key="AIzaSyDQFigX51iCUXDtOke9Q7YtQDJy1_a1ui4")
         
         # Truncate transcript if it's too long
         max_length = 25000  # Approximate character limit for input
