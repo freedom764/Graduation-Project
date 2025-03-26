@@ -1,0 +1,10 @@
+/* src/App.css */
+/* App level styles */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Add any app-specific styles that aren't component related here */
+/* Most styles have been moved to component-specific files or global.css */

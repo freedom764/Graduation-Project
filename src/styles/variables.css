@@ -1,0 +1,68 @@
+/* src/styles/variables.css */
+:root {
+  /* Enhanced color palette */
+  --bg-light: #f8fafc;
+  --bg-dark: #0f172a;
+  --surface-light: #ffffff;
+  --surface-dark: #1e293b; 
+  --surface-alt-light: #f1f5f9;
+  --surface-alt-dark: #334155;
+  
+  /* Text colors */
+  --text-light: #1e293b;
+  --text-dark: #f8fafc;
+  --text-alt-light: #334155;
+  --text-alt-dark: #e2e8f0;
+  --text-muted-light: #64748b;
+  --text-muted-dark: #94a3b8;
+  
+  /* Border colors */
+  --border-light: #e2e8f0;
+  --border-dark: #1e293b;
+  --border-alt-light: #cbd5e1;
+  --border-alt-dark: #334155;
+  
+  /* Enhanced brand colors */
+  --primary: #10b981;
+  --primary-light: #ecfdf5;
+  --primary-dark: #065f46;
+  --primary-hover: #059669;
+  
+  /* Enhanced rating colors */
+  --color-emerald: #10b981;
+  --color-teal: #14b8a6;
+  --color-amber: #f59e0b;
+  --color-rose: #f43f5e;
+  --color-slate: #334155;
+  
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 2.5rem;
+  
+  /* Border radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+  
+  /* Enhanced transitions */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  
+  /* Enhanced shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-focus: 0 0 0 3px rgba(16, 185, 129, 0.4);
+  
+  /* Animation durations */
+  --animation-fast: 0.3s;
+  --animation-normal: 0.5s;
+  --animation-slow: 0.8s;
+}

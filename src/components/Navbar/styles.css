@@ -1,0 +1,242 @@
+/* src/components/Navbar/styles.css */
+.navbar {
+  width: 100%;
+  height: 4rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid;
+  transition: 
+    background-color var(--theme-transition-duration) var(--theme-transition-timing),
+    border-color var(--theme-transition-duration) var(--theme-transition-timing),
+    box-shadow var(--theme-transition-duration) var(--theme-transition-timing);
+}
+
+.navbar.dark {
+  background-color: rgba(15, 23, 42);
+  border-color: rgba(30, 41, 59, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar.light {
+  background-color: rgba(248, 250, 252);
+  border-color: rgba(226, 232, 240, 0.5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.navbar-container {
+  max-width: 1200px;
+  height: 100%;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  position: relative;
+}
+
+.navbar-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+/* Logo container with subtle animation */
+.nav-logo-container {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  will-change: transform, background-color;
+  transform: translateZ(0);
+  transition: 
+    transform 0.2s ease,
+    background-color var(--theme-transition-duration) var(--theme-transition-timing),
+    box-shadow var(--theme-transition-duration) var(--theme-transition-timing);
+}
+
+.dark .nav-logo-container {
+  background-color: rgba(6, 95, 70, 0.4);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+
+.light .nav-logo-container {
+  background-color: rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.1);
+}
+
+.nav-logo {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--primary);
+  transition: color var(--theme-transition-duration) var(--theme-transition-timing);
+}
+
+/* Navigation buttons with subtle hover effect */
+.nav-button {
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0 0.9rem;
+  border-radius: 0;
+  background: transparent;
+  letter-spacing: 0.01em;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  transition: 
+    color var(--theme-transition-duration) var(--theme-transition-timing);
+}
+
+.dark .nav-button {
+  color: var(--text-alt-dark);
+}
+
+.light .nav-button {
+  color: var(--text-alt-light);
+}
+
+/* Subtle hover effect */
+.nav-button::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background-color: var(--primary);
+  transition: width 0.2s ease;
+  will-change: width;
+}
+
+.nav-button:hover::before {
+  width: 30%;
+}
+
+.dark .nav-button:hover {
+  color: var(--primary);
+}
+
+.light .nav-button:hover {
+  color: var(--primary);
+}
+
+.nav-button.active {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Remove static indicator for active button */
+.nav-button.active::after {
+  display: none;
+}
+
+/* Animated indicator */
+.navbar-indicator {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  background-color: var(--primary);
+  will-change: left, width;
+  transform: translateZ(0);
+  transition: 
+    left 0.3s ease, 
+    width 0.3s ease,
+    background-color var(--theme-transition-duration) var(--theme-transition-timing);
+}
+
+/* Theme toggle with subtle animation */
+.theme-toggle {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  will-change: transform, background-color;
+  transition: 
+    background-color 0.2s ease, 
+    color var(--theme-transition-duration) var(--theme-transition-timing),
+    transform 0.2s ease;
+}
+
+.dark .theme-toggle {
+  color: var(--text-alt-dark);
+}
+
+.light .theme-toggle {
+  color: var(--text-alt-light);
+}
+
+.theme-toggle:hover {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--primary);
+  transform: rotate(15deg);
+}
+
+.theme-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  transition: transform 0.3s ease;
+  will-change: transform;
+}
+
+.theme-toggle:hover .theme-icon {
+  transform: scale(1.1);
+}
+
+.dark .theme-icon.sun {
+  color: #fbbf24;
+}
+
+.light .theme-icon.moon {
+  color: var(--primary); /* Lighter teal color */
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .navbar-center {
+    display: none;
+  }
+  
+  .navbar-container {
+    justify-content: space-between;
+  }
+  
+  .navbar-left {
+    gap: 0;
+  }
+  
+  .nav-button {
+    padding: 0 0.5rem;
+    font-size: 0.8rem;
+  }
+}

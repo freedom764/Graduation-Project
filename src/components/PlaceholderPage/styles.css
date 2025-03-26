@@ -1,0 +1,188 @@
+/* src/components/PlaceholderPage/styles.css */
+.placeholder-container {
+  min-height: 100vh;
+  position: relative;
+  padding-top: 4rem; /* Account for fixed navbar */
+  display: flex;
+  justify-content: center;
+  transition: 
+    background-color var(--theme-transition-duration) var(--theme-transition-timing),
+    color var(--theme-transition-duration) var(--theme-transition-timing);
+}
+
+.placeholder-container.dark {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+.placeholder-container.light {
+  background-color: var(--bg-light);
+  color: var(--text-light);
+}
+
+/* Reuse background patterns from GameTranscriptAnalyzer */
+.bg-patterns {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  width: 22rem;
+  height: 22rem;
+  opacity: 0.08;
+  filter: blur(4.5rem);
+}
+
+.top-right {
+  top: -5rem;
+  right: -5rem;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%);
+  animation: float 20s ease-in-out infinite alternate;
+}
+
+.bottom-left {
+  bottom: -5rem;
+  left: -5rem;
+  background: radial-gradient(circle, rgba(20, 184, 166, 0.2) 0%, transparent 70%);
+  animation: float 24s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(12px, 12px);
+  }
+}
+
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: radial-gradient(rgba(16, 185, 129, 0.4) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+.content-container {
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md) var(--space-xl);
+  position: relative;
+  z-index: 1;
+  margin-top: 2rem;
+}
+
+/* Placeholder card with subtle animations */
+.placeholder-card {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid;
+  padding: var(--space-xl);
+  text-align: center;
+  transition: 
+    background-color var(--theme-transition-duration) var(--theme-transition-timing),
+    border-color var(--theme-transition-duration) var(--theme-transition-timing),
+    box-shadow var(--theme-transition-duration) var(--theme-transition-timing);
+}
+
+.dark .placeholder-card {
+  background-color: var(--surface-dark);
+  border-color: var(--border-dark);
+  box-shadow: var(--shadow-lg);
+}
+
+.light .placeholder-card {
+  background-color: var(--surface-light);
+  border-color: var(--border-light);
+  box-shadow: var(--shadow-md);
+}
+
+.placeholder-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl) 0;
+}
+
+/* Icon with subtle pulse animation */
+.placeholder-icon {
+  width: 5rem;
+  height: 5rem;
+  color: var(--primary);
+  margin-bottom: var(--space-lg);
+  opacity: 0.8;
+  animation: gentle-pulse 3s ease-in-out infinite;
+}
+
+@keyframes gentle-pulse {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.placeholder-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+  color: var(--primary);
+  transition: color var(--theme-transition-duration) var(--theme-transition-timing);
+}
+
+.placeholder-message {
+  font-size: 1rem;
+  max-width: 28rem;
+  margin: 0 auto;
+  line-height: 1.5;
+  transition: color var(--theme-transition-duration) var(--theme-transition-timing);
+}
+
+.dark .placeholder-message {
+  color: var(--text-alt-dark);
+}
+
+.light .placeholder-message {
+  color: var(--text-alt-light);
+}
+
+/* Feature badge styles */
+.placeholder-feature-name {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  transition: color var(--theme-transition-duration) var(--theme-transition-timing);
+}
+
+.dark .placeholder-feature-name {
+  color: var(--text-muted-dark);
+}
+
+.light .placeholder-feature-name {
+  color: var(--text-muted-light);
+}
+
+.feature-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background-color: rgba(16, 185, 129, 0.15);
+  color: var(--primary);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  margin-right: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.feature-badge:hover {
+  transform: translateY(-1px);
+}

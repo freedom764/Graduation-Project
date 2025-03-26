@@ -1,0 +1,25 @@
+// src/components/GameTranscriptAnalyzer/GameController.tsx
+import React from 'react';
+import { GameControllerProps } from './types';
+
+const GameController: React.FC<GameControllerProps> = ({ className = "" }) => (
+  <svg 
+    className={className} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    <path d="M17.5 7.5C18.8807 7.5 20 6.38071 20 5C20 3.61929 18.8807 2.5 17.5 2.5C16.1193 2.5 15 3.61929 15 5C15 6.38071 16.1193 7.5 17.5 7.5Z" fill="currentColor" fillOpacity="0.5"/>
+    <path d="M6.5 7.5C7.88071 7.5 9 6.38071 9 5C9 3.61929 7.88071 2.5 6.5 2.5C5.11929 2.5 4 3.61929 4 5C4 6.38071 5.11929 7.5 6.5 7.5Z" fill="currentColor" fillOpacity="0.5"/>
+    <path d="M22 13.5C22 17.6421 18.6421 21 14.5 21H9.5C5.35786 21 2 17.6421 2 13.5C2 9.35786 5.35786 6 9.5 6H14.5C18.6421 6 22 9.35786 22 13.5Z" fill="currentColor"/>
+    <path d="M9 11.5V15.5" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+    <path d="M7 13.5H11" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+    <path d="M16.5 11.5L16.5 11.51" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+    <path d="M14.5 13.5L14.5 13.51" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+    <path d="M18.5 13.5L18.5 13.51" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+    <path d="M16.5 15.5L16.5 15.51" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+
+export default GameController;
