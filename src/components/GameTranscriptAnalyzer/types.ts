@@ -1,5 +1,6 @@
 // src/components/GameTranscriptAnalyzer/types.ts
 export type RatingType = 'E' | 'ET' | 'T' | 'M';
+export type ApiModelType = 'gpt' | 'gemini'; // Add this new type
 
 export type ThemeColor = 'emerald' | 'teal' | 'amber' | 'rose' | 'slate';
 

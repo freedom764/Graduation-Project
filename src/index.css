@@ -4,5 +4,6 @@
 
 /* Import component styles */
 @import './components/GameTranscriptAnalyzer/styles.css';
+@import './components/GameTranscriptSummarizer/styles.css';
 @import './components/Navbar/styles.css';
 @import './components/PlaceholderPage/styles.css';

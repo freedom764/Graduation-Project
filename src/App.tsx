@@ -2,6 +2,8 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import './App.css';
 import GameTranscriptAnalyzer from './components/GameTranscriptAnalyzer';
+import GameTranscriptSummarizer from './components/GameTranscriptSummarizer';
+import GameContentQuestionnaire from './components/GameContentQuestionnaire';
 import Navbar from './components/Navbar';
 import PlaceholderPage from './components/PlaceholderPage';
 
@@ -65,18 +67,14 @@ function App() {
         );
       case 'summarizer':
         return (
-          <PlaceholderPage 
-            pageName="Summarizer" 
+          <GameTranscriptSummarizer 
             darkMode={darkMode}
-            message="Game content summarization features coming soon!"
           />
         );
       case 'questionnaire':
         return (
-          <PlaceholderPage 
-            pageName="Questionnaire"
+          <GameContentQuestionnaire
             darkMode={darkMode}
-            message="Interactive game content questionnaire features coming soon!"
           />
         );
       default:

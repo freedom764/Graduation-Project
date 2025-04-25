@@ -13,7 +13,6 @@
   transition-delay: 0s !important;
 }
 
-/* FORCED NO TRANSITION for analyzing state elements */
 .analyzing-label, .analyzing-text, .dots {
   transition: none !important;
   will-change: auto;
@@ -1605,4 +1604,158 @@
 
 .light .alt-rating-confidence {
   color: var(--text-muted-light);
+}
+
+.model-selector {
+  position: absolute;
+  left: 0;
+  z-index: 1;
+  transition: none !important;
+}
+
+/* Define fixed colors for toggle container to avoid theme transitions */
+:root {
+  --toggle-bg-dark: rgba(51, 65, 85, 0.5);
+  --toggle-bg-light: rgba(241, 245, 249, 0.7);
+  --toggle-border-dark: #1e293b;
+  --toggle-border-light: #cbd5e1;
+  --toggle-text-dark: #94a3b8;
+  --toggle-text-light: #64748b;
+}
+
+/* Proper toggle container with NO THEME TRANSITIONS */
+.model-toggle-container {
+  position: relative;
+  display: flex;
+  border-radius: 9999px;
+  padding: 0.25rem;
+  border: 1px solid;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  width: 135px;
+  height: 32px;
+  overflow: hidden;
+  transform: translateZ(0);
+  will-change: transform;
+  /* CRITICAL: No transition except for hover */
+  transition: none !important;
+}
+
+/* Separate hover transition that won't be affected by theme change */
+.model-toggle-container:hover {
+  transform: translateY(-1px) translateZ(0);
+  transition: transform 0.2s ease !important;
+}
+
+/* Use fixed colors instead of theme variables */
+.dark .model-toggle-container {
+  background-color: var(--toggle-bg-dark);
+  border-color: var(--toggle-border-dark);
+}
+
+.light .model-toggle-container {
+  background-color: var(--toggle-bg-light);
+  border-color: var(--toggle-border-light);
+}
+
+/* Sliding indicator that moves based on selection with ZERO THEME TRANSITIONS */
+.toggle-indicator {
+  position: absolute;
+  width: 50%;
+  height: calc(100% - 4px);
+  background-color: #10b981; /* Fixed color instead of theme variable */
+  border-radius: 9999px;
+  top: 2px;
+  left: 2px;
+  z-index: 1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transform: translateZ(0);
+  will-change: transform;
+  
+  /* Only transition transform property */
+  transition-property: transform !important;
+  transition-duration: 0.3s !important;
+  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  transition-delay: 0s !important;
+}
+
+/* Move indicator to second position when Gemini is selected */
+.toggle-indicator.gemini {
+  transform: translateX(calc(100% - 4px)) translateZ(0);
+}
+
+/* Labels inside toggle with NO THEME TRANSITIONS */
+.toggle-option {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem 0;
+  font-size: 0.775rem;
+  font-weight: 500;
+  cursor: pointer;
+  z-index: 2;
+  user-select: none;
+  
+  /* Only transition color property */
+  transition-property: color !important;
+  transition-duration: 0.15s !important;
+  transition-timing-function: ease !important;
+  transition-delay: 0s !important;
+}
+
+/* Use fixed colors instead of theme variables */
+.dark .toggle-option {
+  color: var(--toggle-text-dark);
+}
+
+.light .toggle-option {
+  color: var(--toggle-text-light);
+}
+
+/* Style for active option - fixed color */
+.toggle-option.active {
+  color: white !important;
+}
+
+/* Disabled state */
+.model-toggle-container.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Update button container to accommodate the model selector */
+.button-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 0 6rem; 
+}
+
+/* Update media queries for responsive design */
+@media (max-width: 640px) {
+  .button-container {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0;
+  }
+  
+  .model-selector {
+    position: static;
+    margin-bottom: 1rem;
+    align-self: center;
+  }
+  
+  .word-counter {
+    position: static;
+    align-self: center;
+    margin-top: 1rem;
+  }
+  
+  .submit-button {
+    width: 100%;
+  }
 }

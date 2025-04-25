@@ -1,5 +1,5 @@
 // src/services/analyzer.ts
-import { AnalysisResult, RatingType } from '../components/GameTranscriptAnalyzer/types';
+import { AnalysisResult, RatingType, ApiModelType } from '../components/GameTranscriptAnalyzer/types';
 
 /**
  * Descriptions for each rating
@@ -64,7 +64,7 @@ const DESCRIPTOR_EXPLANATIONS: Record<string, string> = {
  * Analyze transcript using GPT-4o-mini + Random Forest model
  * Calls the Python backend API
  */
-export function analyzeTranscript(transcript: string): Promise<AnalysisResult> {
+export function analyzeTranscript(transcript: string, model: ApiModelType = 'gpt'): Promise<AnalysisResult> {
   // API endpoint URL
   const apiUrl = 'http://localhost:5000/api/analyze';
   
@@ -77,7 +77,7 @@ export function analyzeTranscript(transcript: string): Promise<AnalysisResult> {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ transcript }),
+        body: JSON.stringify({ transcript, model }),
       })
         .then(response => {
           if (!response.ok) {

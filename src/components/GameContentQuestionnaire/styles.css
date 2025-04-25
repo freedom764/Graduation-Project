@@ -1,0 +1,942 @@
+/* src/components/GameContentQuestionnaire/styles.css */
+
+
+.questionnaire-container {
+  min-height: 100vh;
+  position: relative;
+  padding-top: 4rem; /* Account for fixed navbar */
+  display: flex;
+  justify-content: center;
+  overflow-x: hidden;
+  transition: 
+    background-color var(--theme-transition-duration) var(--theme-transition-timing),
+    color var(--theme-transition-duration) var(--theme-transition-timing);
+}
+
+.questionnaire-container.dark {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+.questionnaire-container.light {
+  background-color: var(--bg-light);
+  color: var(--text-light);
+}
+
+
+/* Reuse background patterns with specific selectors */
+.questionnaire-container .bg-patterns {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* Content container */
+.questionnaire-container .content-container {
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md) var(--space-xl);
+  position: relative;
+  z-index: 1;
+  margin-top: 2rem;
+}
+
+/* Main card */
+.questionnaire-container .main-card {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  will-change: transform, box-shadow;
+  transform: translateZ(0);
+  transition: 
+    background-color var(--theme-transition-duration) var(--theme-transition-timing),
+    border-color var(--theme-transition-duration) var(--theme-transition-timing),
+    box-shadow var(--theme-transition-duration) var(--theme-transition-timing);
+  border-width: 1px;
+  border-style: solid;
+}
+
+.questionnaire-container.dark .main-card {
+  background-color: var(--surface-dark);
+  border-color: var(--border-dark);
+  box-shadow: var(--shadow-lg);
+}
+
+.questionnaire-container.light .main-card {
+  background-color: var(--surface-light);
+  border-color: var(--border-light);
+  box-shadow: var(--shadow-md);
+}
+
+/* Questionnaire form - now with more specific selectors */
+.questionnaire-container .questionnaire-form {
+  padding: var(--space-xl);
+  border: none;
+}
+
+/* Form header */
+.questionnaire-container .form-header {
+  margin-bottom: var(--space-xl);
+  text-align: center;
+}
+
+.questionnaire-container .form-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+}
+
+.questionnaire-container .form-description {
+  font-size: 0.95rem;
+  margin-bottom: var(--space-lg);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+.questionnaire-container.dark .form-description {
+  color: var(--text-alt-dark);
+}
+
+.questionnaire-container.light .form-description {
+  color: var(--text-alt-light);
+}
+
+/* Progress section - renamed classes to avoid conflicts */
+.questionnaire-container .questionnaire-progress-section {
+  margin: var(--space-md) auto;
+  max-width: 500px;
+}
+
+.questionnaire-container .questionnaire-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xs);
+}
+
+.questionnaire-container .questionnaire-progress-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.questionnaire-container.dark .questionnaire-progress-label {
+  color: var(--text-muted-dark);
+}
+
+.questionnaire-container.light .questionnaire-progress-label {
+  color: var(--text-muted-light);
+}
+
+.questionnaire-container .questionnaire-progress-percentage {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Progress track and fill - renamed to avoid conflicts */
+.questionnaire-container .questionnaire-progress-track {
+  width: 100%;
+  height: 0.5rem;
+  background-color: rgba(51, 65, 85, 0.2);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.questionnaire-container .questionnaire-progress-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.questionnaire-container .questionnaire-progress-fill.color-emerald {
+  background-color: var(--color-emerald);
+}
+
+.questionnaire-container .questionnaire-progress-fill.color-amber {
+  background-color: var(--color-amber);
+}
+
+.questionnaire-container .questionnaire-progress-fill.color-rose {
+  background-color: var(--color-rose);
+}
+
+/* Categories container */
+.questionnaire-container .categories-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+/* Category section */
+.questionnaire-container .category-section {
+  border: 1px solid;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: 
+    background-color var(--theme-transition-duration) var(--theme-transition-timing),
+    border-color var(--theme-transition-duration) var(--theme-transition-timing),
+    box-shadow var(--theme-transition-duration) var(--theme-transition-timing);
+}
+
+.questionnaire-container.dark .category-section {
+  border-color: var(--border-dark);
+  background-color: rgba(51, 65, 85, 0.3);
+}
+
+.questionnaire-container.light .category-section {
+  border-color: var(--border-light);
+  background-color: var(--surface-light);
+}
+
+.questionnaire-container .category-section:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+/* Category header */
+.questionnaire-container .category-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) var(--space-lg);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.2s ease;
+}
+
+.questionnaire-container.dark .category-header {
+  color: var(--text-alt-dark);
+}
+
+.questionnaire-container.light .category-header {
+  color: var(--text-alt-light);
+}
+
+.questionnaire-container.dark .category-header:hover {
+  background-color: rgba(51, 65, 85, 0.5);
+}
+
+.questionnaire-container.light .category-header:hover {
+  background-color: var(--surface-alt-light);
+}
+
+.questionnaire-container .category-header.completed {
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+/* Category header content */
+.questionnaire-container .category-header-content {
+  flex: 1;
+}
+
+.questionnaire-container .category-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.questionnaire-container .category-description {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+.questionnaire-container.dark .category-description {
+  color: var(--text-muted-dark);
+}
+
+.questionnaire-container.light .category-description {
+  color: var(--text-muted-light);
+}
+
+/* Category controls */
+.questionnaire-container .category-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.questionnaire-container .completion-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: white;
+}
+
+.questionnaire-container .completion-badge svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.questionnaire-container .toggle-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  transform: rotate(0deg);
+  transition: transform 0.3s ease;
+}
+
+.questionnaire-container .category-section.expanded .toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Category content - expandable/collapsible */
+.questionnaire-container .category-content {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition: 
+    max-height 0.5s ease-in-out,
+    opacity 0.3s ease-in-out,
+    visibility 0s 0.5s;
+}
+
+.questionnaire-container .category-content.expanded {
+  max-height: 2000px; /* Arbitrary large value */
+  opacity: 1;
+  visibility: visible;
+  transition: 
+    max-height 0.5s ease-in-out,
+    opacity 0.3s ease-in-out,
+    visibility 0s;
+}
+
+/* Question item */
+.questionnaire-container .question-item {
+  padding: var(--space-md) var(--space-lg);
+  border-top: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  transition: background-color 0.2s ease;
+}
+
+.questionnaire-container.dark .question-item {
+  border-color: rgba(51, 65, 85, 0.5);
+}
+
+.questionnaire-container.light .question-item {
+  border-color: var(--border-light);
+}
+
+.questionnaire-container.dark .question-item:hover {
+  background-color: rgba(51, 65, 85, 0.2);
+}
+
+.questionnaire-container.light .question-item:hover {
+  background-color: rgba(241, 245, 249, 0.5);
+}
+
+/* Question content */
+.questionnaire-container .question-content {
+  flex: 1;
+}
+
+.questionnaire-container .question-text {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.questionnaire-container .question-description {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+.questionnaire-container.dark .question-description {
+  color: var(--text-muted-dark);
+}
+
+.questionnaire-container.light .question-description {
+  color: var(--text-muted-light);
+}
+
+/* Question actions */
+.questionnaire-container .question-actions {
+  flex-shrink: 0;
+}
+
+/* Toggle buttons */
+.questionnaire-container .toggle-buttons {
+  display: flex;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid;
+}
+
+.questionnaire-container.dark .toggle-buttons {
+  border-color: var(--border-dark);
+  background-color: rgba(51, 65, 85, 0.3);
+}
+
+.questionnaire-container.light .toggle-buttons {
+  border-color: var(--border-light);
+  background-color: rgba(241, 245, 249, 0.5);
+}
+
+.questionnaire-container .toggle-button {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: 
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.questionnaire-container .toggle-button.no {
+  border-right: 1px solid;
+}
+
+.questionnaire-container.dark .toggle-button.no {
+  border-right-color: var(--border-dark);
+}
+
+.questionnaire-container.light .toggle-button.no {
+  border-right-color: var(--border-light);
+}
+
+.questionnaire-container.dark .toggle-button {
+  color: var(--text-muted-dark);
+}
+
+.questionnaire-container.light .toggle-button {
+  color: var(--text-muted-light);
+}
+
+.questionnaire-container .toggle-button.selected {
+  font-weight: 600;
+}
+
+.questionnaire-container .toggle-button.yes.selected {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--primary);
+}
+
+.questionnaire-container .toggle-button.no.selected {
+  background-color: rgba(244, 63, 94, 0.1);
+  color: var(--color-rose);
+}
+
+/* Form actions */
+.questionnaire-container .form-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+/* Submit button - renamed to avoid conflicts */
+.questionnaire-container .questionnaire-submit-button {
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  color: white;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  will-change: transform, box-shadow;
+  transform: translateZ(0);
+  transition: 
+    background-color 0.2s ease, 
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.questionnaire-container .questionnaire-submit-button:not(.disabled) {
+  background: var(--primary);
+}
+
+.questionnaire-container .questionnaire-submit-button:not(.disabled):hover {
+  background-color: var(--primary-hover);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px) translateZ(0);
+}
+
+.questionnaire-container .questionnaire-submit-button:not(.disabled):active {
+  transform: translateY(0) translateZ(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.questionnaire-container .questionnaire-submit-button.disabled {
+  cursor: not-allowed;
+}
+
+.questionnaire-container.dark .questionnaire-submit-button.disabled {
+  background-color: var(--surface-alt-dark);
+  color: var(--text-muted-dark);
+}
+
+.questionnaire-container.light .questionnaire-submit-button.disabled {
+  background-color: var(--surface-alt-light);
+  color: var(--text-muted-light);
+}
+
+/* Incomplete message */
+.questionnaire-container .incomplete-message {
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.questionnaire-container.dark .incomplete-message {
+  color: var(--text-muted-dark);
+}
+
+.questionnaire-container.light .incomplete-message {
+  color: var(--text-muted-light);
+}
+
+/* Results view */
+.questionnaire-container .questionnaire-results {
+  padding: var(--space-xl);
+  border: none;
+}
+
+.questionnaire-container .results-header {
+  margin-bottom: var(--space-xl);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.questionnaire-container .results-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+}
+
+.questionnaire-container .results-description {
+  font-size: 0.95rem;
+  margin-bottom: var(--space-lg);
+  max-width: 600px;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+.questionnaire-container.dark .results-description {
+  color: var(--text-alt-dark);
+}
+
+.questionnaire-container.light .results-description {
+  color: var(--text-alt-light);
+}
+
+/* Results actions */
+.questionnaire-container .results-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Back to form button */
+.questionnaire-container .back-to-form-button,
+.questionnaire-container .reset-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: 
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.questionnaire-container .back-to-form-button:hover,
+.questionnaire-container .reset-button:hover {
+  transform: translateY(-1px);
+}
+
+.questionnaire-container.dark .back-to-form-button,
+.questionnaire-container.dark .reset-button {
+  background-color: rgba(51, 65, 85, 0.5);
+  color: var(--text-alt-dark);
+}
+
+.questionnaire-container.light .back-to-form-button,
+.questionnaire-container.light .reset-button {
+  background-color: rgba(241, 245, 249, 0.7);
+  color: var(--text-alt-light);
+}
+
+.questionnaire-container.dark .back-to-form-button:hover,
+.questionnaire-container.dark .reset-button:hover {
+  background-color: rgba(51, 65, 85, 0.7);
+}
+
+.questionnaire-container.light .back-to-form-button:hover,
+.questionnaire-container.light .reset-button:hover {
+  background-color: rgba(241, 245, 249, 0.9);
+}
+
+.questionnaire-container .back-to-form-button svg,
+.questionnaire-container .reset-button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Analyzing animations - reused from analyzer but scoped to questionnaire */
+.questionnaire-container .analyzing-text {
+  display: flex;
+  align-items: center;
+}
+
+.questionnaire-container .modern-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+}
+
+.questionnaire-container .bar-container {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 1rem;
+}
+
+.questionnaire-container .bar {
+  width: 2px;
+  height: 100%;
+  background-color: currentColor;
+  border-radius: 2px;
+  animation: bar-wave 1.2s ease-in-out infinite;
+}
+
+.questionnaire-container .bar1 { animation-delay: 0.0s; height: 30%; }
+.questionnaire-container .bar2 { animation-delay: 0.1s; height: 50%; }
+.questionnaire-container .bar3 { animation-delay: 0.2s; height: 70%; }
+.questionnaire-container .bar4 { animation-delay: 0.3s; height: 50%; }
+.questionnaire-container .bar5 { animation-delay: 0.4s; height: 30%; }
+
+.questionnaire-container .analyzing-label {
+  font-weight: 500;
+}
+
+.questionnaire-container .dots {
+  display: inline-block;
+  animation: dots-pulse 1.5s infinite;
+}
+
+/* Simplified results display */
+.questionnaire-container .questionnaire-results-content {
+  margin-top: 2rem;
+}
+
+.questionnaire-container .rating-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Rating badges with namespaced classes */
+.questionnaire-container .questionnaire-rating-badge {
+  width: 5rem;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-lg);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.questionnaire-container .questionnaire-rating-badge.rating-e {
+  background: linear-gradient(to bottom right, #12d990, #09795a);
+}
+
+.questionnaire-container .questionnaire-rating-badge.rating-et {
+  background: linear-gradient(to bottom right, var(--color-teal), #0d9488);
+}
+
+.questionnaire-container .questionnaire-rating-badge.rating-t {
+  background: linear-gradient(to bottom right, var(--color-amber), #d97706);
+}
+
+.questionnaire-container .questionnaire-rating-badge.rating-m {
+  background: linear-gradient(to bottom right, var(--color-rose), #e11d48);
+}
+
+.questionnaire-container .rating-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.questionnaire-container .rating-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.questionnaire-container .questionnaire-confidence-meter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.questionnaire-container .confidence-label {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.questionnaire-container .confidence-value {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.questionnaire-container .alt-rating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.questionnaire-container .alt-rating-label {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.questionnaire-container .alt-rating-badge {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+}
+
+.questionnaire-container .alt-rating-badge.alt-e {
+  background: linear-gradient(to bottom right, #12d990, #09795a);
+}
+
+.questionnaire-container .alt-rating-badge.alt-et {
+  background: linear-gradient(to bottom right, var(--color-teal), #0d9488);
+}
+
+.questionnaire-container .alt-rating-badge.alt-t {
+  background: linear-gradient(to bottom right, var(--color-amber), #d97706);
+}
+
+.questionnaire-container .alt-rating-badge.alt-m {
+  background: linear-gradient(to bottom right, var(--color-rose), #e11d48);
+}
+
+.questionnaire-container .alt-confidence {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.questionnaire-container .rating-description {
+  padding: 1rem;
+  margin: 0 auto 2rem;
+  max-width: 650px;
+  border-radius: var(--radius-md);
+  line-height: 1.6;
+}
+
+.questionnaire-container.dark .rating-description {
+  background-color: rgba(51, 65, 85, 0.3);
+}
+
+.questionnaire-container.light .rating-description {
+  background-color: rgba(241, 245, 249, 0.5);
+}
+
+.questionnaire-container .content-factors {
+  margin-top: 2rem;
+}
+
+.questionnaire-container .factors-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.questionnaire-container .factors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.questionnaire-container .factor-item {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+}
+
+.questionnaire-container.dark .factor-item {
+  background-color: rgba(51, 65, 85, 0.3);
+}
+
+.questionnaire-container.light .factor-item {
+  background-color: rgba(241, 245, 249, 0.5);
+}
+
+.questionnaire-container .factor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.questionnaire-container .factor-name {
+  font-weight: 600;
+}
+
+.questionnaire-container .factor-level {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-full);
+}
+
+/* Severity indicator */
+.questionnaire-container .factor-severity {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.25rem;
+}
+
+.questionnaire-container .severity-value {
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+/* Factor descriptors */
+.questionnaire-container .factor-descriptors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.questionnaire-container .descriptor-tag {
+  font-size: 0.7rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-full);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.questionnaire-container .descriptor-tag.color-high {
+  background-color: rgba(244, 63, 94, 0.1);
+  color: var(--color-rose);
+}
+
+.questionnaire-container .descriptor-tag.color-moderate {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: var(--color-amber);
+}
+
+.questionnaire-container .descriptor-tag.color-low {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--color-emerald);
+}
+
+.questionnaire-container .descriptor-tag.color-none {
+  background-color: rgba(148, 163, 184, 0.1);
+  color: #94a3b8;
+}
+
+.questionnaire-container .level-high {
+  background-color: rgba(244, 63, 94, 0.1);
+  color: var(--color-rose);
+}
+
+.questionnaire-container .level-moderate {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: var(--color-amber);
+}
+
+.questionnaire-container .level-low {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--color-emerald);
+}
+
+.questionnaire-container .level-none {
+  background-color: rgba(148, 163, 184, 0.1);
+  color: #94a3b8;
+}
+
+.questionnaire-container .factor-bar-container {
+  width: 100%;
+  height: 0.375rem;
+  background-color: rgba(51, 65, 85, 0.3);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.questionnaire-container .factor-bar {
+  height: 100%;
+  transition: width 0.5s ease-out;
+}
+
+.questionnaire-container .bar-high {
+  background-color: var(--color-rose);
+}
+
+.questionnaire-container .bar-moderate {
+  background-color: var(--color-amber);
+}
+
+.questionnaire-container .bar-low {
+  background-color: var(--color-emerald);
+}
+
+.questionnaire-container .bar-none {
+  background-color: #94a3b8;
+}
+
+/* Media queries */
+@media (max-width: 640px) {
+  .questionnaire-container .questionnaire-form,
+  .questionnaire-container .questionnaire-results {
+    padding: var(--space-md);
+  }
+  
+  .questionnaire-container .category-header,
+  .questionnaire-container .question-item {
+    padding: var(--space-md) var(--space-md);
+  }
+  
+  .questionnaire-container .question-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .questionnaire-container .toggle-buttons {
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+  
+  .questionnaire-container .toggle-button {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .questionnaire-container .rating-display {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}

@@ -3,7 +3,7 @@ import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import './styles.css';
 import AnalysisResults from './AnalysisResults';
 import { analyzeTranscript } from '../../services/analyzer';
-import { AnalysisResult, GameTranscriptAnalyzerProps } from './types';
+import { AnalysisResult, GameTranscriptAnalyzerProps, ApiModelType } from './types';
 
 const GameTranscriptAnalyzer: React.FC<GameTranscriptAnalyzerProps> = ({ 
   darkMode, 
@@ -17,6 +17,9 @@ const GameTranscriptAnalyzer: React.FC<GameTranscriptAnalyzerProps> = ({
     focusMode: false
   });
 
+  // Add API model choice state
+  const [modelChoice, setModelChoice] = useState<ApiModelType>('gpt');
+  
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [showResult, setShowResult] = useState(false);
   
@@ -62,11 +65,11 @@ const GameTranscriptAnalyzer: React.FC<GameTranscriptAnalyzerProps> = ({
     autoResizeTextarea();
   }, [state.transcript, autoResizeTextarea]);
 
-  // Analysis function
+  // Analysis function - now passes the model choice
   const handleAnalyze = useCallback(() => {
     updateState({ isAnalyzing: true });
     
-    analyzeTranscript(state.transcript)
+    analyzeTranscript(state.transcript, modelChoice)
       .then(analysisResult => {
         setResult(analysisResult);
         setShowResult(true);
@@ -76,7 +79,7 @@ const GameTranscriptAnalyzer: React.FC<GameTranscriptAnalyzerProps> = ({
         console.error('Analysis error:', error);
         updateState({ isAnalyzing: false });
       });
-  }, [state.transcript, updateState]);
+  }, [state.transcript, updateState, modelChoice]);
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
@@ -85,6 +88,19 @@ const GameTranscriptAnalyzer: React.FC<GameTranscriptAnalyzerProps> = ({
       handleAnalyze();
     }
   }, [state.transcript, handleAnalyze]);
+
+  // Model choice handlers - Optimized to prevent re-renders on theme change
+  const selectGpt = useCallback(() => {
+    if (!state.isAnalyzing) {
+      setModelChoice('gpt');
+    }
+  }, [state.isAnalyzing]);
+
+  const selectGemini = useCallback(() => {
+    if (!state.isAnalyzing) {
+      setModelChoice('gemini');
+    }
+  }, [state.isAnalyzing]);
 
   // Memoize word count calculation
   const wordCount = useMemo(() => {
@@ -122,6 +138,32 @@ const GameTranscriptAnalyzer: React.FC<GameTranscriptAnalyzerProps> = ({
             </div>
       
             <div className="button-container">
+              {/* API Model toggle on the left - Zero-lag implementation */}
+              <div className="model-selector">
+                <div className={`model-toggle-container ${state.isAnalyzing ? 'disabled' : ''}`}>
+                  {/* Sliding indicator */}
+                  <div className={`toggle-indicator ${modelChoice === 'gemini' ? 'gemini' : ''}`}></div>
+                  
+                  {/* Toggle options - Optimized with separate click handlers */}
+                  <div 
+                    className={`toggle-option ${modelChoice === 'gpt' ? 'active' : ''}`}
+                    onClick={selectGpt}
+                    aria-label="Use GPT API for evidence collection"
+                    title="Use GPT API (25K token limit)"
+                  >
+                    GPT
+                  </div>
+                  <div 
+                    className={`toggle-option ${modelChoice === 'gemini' ? 'active' : ''}`}
+                    onClick={selectGemini}
+                    aria-label="Use Gemini API for evidence collection"
+                    title="Use Gemini API (no token limit)"
+                  >
+                    Gemini
+                  </div>
+                </div>
+              </div>
+              
               <button
                 type="submit"
                 disabled={state.isAnalyzing || state.transcript.trim().length === 0}

@@ -79,6 +79,86 @@ def split_transcript(transcript, max_tokens=125000):
 def get_formatted_descriptor_name(descriptor):
     return ' '.join(word.capitalize() for word in descriptor.split('_'))
 
+# Filter content flags based on content hierarchies
+def filter_content_flags_by_hierarchy(flags):
+    # Define hierarchies for each category (from strongest to mildest)
+    hierarchies = {
+        # Violence hierarchy
+        'violence': [
+            'intense_violence', 'moderate_violence', 'fantasy_violence', 
+            'cartoon_violence', 'mild_violence', 'mild_fantasy_violence', 
+            'mild_cartoon_violence'
+        ],
+        
+        # Blood hierarchy
+        'blood': [
+            'blood_and_gore', 'blood', 'animated_blood', 'mild_blood'
+        ],
+        
+        # Language hierarchy
+        'language': [
+            'strong_language', 'language', 'lyrics', 'mild_language', 'mild_lyrics'
+        ],
+        
+        # Humor hierarchy
+        'humor': [
+            'mature_humor', 'crude_humor'
+        ],
+        
+        # Substances hierarchy
+        'substances': [
+            'use_of_drugs_and_alcohol', 'use_of_alcohol', 'drug_reference', 'alcohol_reference'
+        ],
+        
+        # Sexual Content hierarchy
+        'sexual': [
+            'strong_sexual_content', 'sexual_content', 'sexual_themes', 'mild_suggestive_themes'
+        ],
+        
+        # Nudity hierarchy
+        'nudity': [
+            'nudity', 'partial_nudity'
+        ],
+        
+        # Gambling (standalone)
+        'gambling': [
+            'simulated_gambling'
+        ]
+    }
+    
+    # Create processed flags dictionary
+    processed_flags = {}
+    
+    # First, initialize all flags to 0
+    for category_flags in hierarchies.values():
+        for flag in category_flags:
+            processed_flags[flag] = 0
+    
+    # Process each category to filter for strongest flag
+    for category, hierarchy in hierarchies.items():
+        # Find the strongest active flag in this category
+        strongest_flag = None
+        for flag in hierarchy:
+            if flag in flags and flags[flag] == 1:
+                strongest_flag = flag
+                break  # Stop at the first (strongest) flag
+        
+        # Set the strongest flag to 1, leave others as 0
+        if strongest_flag:
+            processed_flags[strongest_flag] = 1
+    
+    # Copy the 'no_descriptors' flag if present
+    if 'no_descriptors' in flags:
+        processed_flags['no_descriptors'] = flags['no_descriptors']
+    
+    # Add suggestive_themes if needed (often used in RF model)
+    if 'suggestive_themes' not in processed_flags:
+        processed_flags['suggestive_themes'] = 0
+        if 'sexual_themes' in processed_flags and processed_flags['sexual_themes'] == 1:
+            processed_flags['suggestive_themes'] = 1
+    
+    return processed_flags
+
 # Calculate extremeness percentage for each content category
 def calculate_category_extremeness(content_flags):
     # Define severity levels for each descriptor (0-4)
@@ -359,9 +439,9 @@ def get_active_descriptors_by_category(content_flags):
     return categories
 
 # Get descriptor examples with GPT
-def get_descriptor_examples(client, transcript, active_descriptors):
+def get_descriptor_examples_with_gpt(client, transcript, active_descriptors):
     """
-    Get examples and key words from transcript for each active content descriptor.
+    Get examples and key words from transcript for each active content descriptor using GPT.
     
     Args:
         client: OpenAI client
@@ -407,7 +487,7 @@ Return a JSON object with:
     else:
         analysis_transcript = transcript
     
-    print(f"Finding examples and key words for: {', '.join(flat_descriptors)}")
+    print(f"Finding examples and key words with GPT for: {', '.join(flat_descriptors)}")
     
     # Make API request
     response = client.chat.completions.create(
@@ -434,8 +514,164 @@ Return a JSON object with:
         print("Raw response:", response.choices[0].message.content)
         return {}
 
+# Get descriptor examples with Gemini
+def get_descriptor_examples_with_gemini(transcript, active_descriptors):
+    """
+    Get examples and key words from transcript for each active content descriptor using Gemini API.
+    
+    Args:
+        transcript: Game transcript text
+        active_descriptors: Dictionary of categories and their active descriptors
+    
+    Returns:
+        Dictionary of descriptors with their examples and key words
+    """
+    # Flatten the active descriptors into a simple list
+    flat_descriptors = []
+    for category, descriptors in active_descriptors.items():
+        for descriptor in descriptors:
+            if descriptor != "None":  # Skip "None" values
+                flat_descriptors.append(descriptor)
+    
+    # If there are no descriptors, return empty dictionary
+    if not flat_descriptors:
+        return {}
+    
+    try:
+        # Initialize the Gemini API client
+        client = genai.Client(api_key="")
+        
+        # Use full transcript without truncation - Gemini can handle ~1 million tokens
+        analysis_transcript = transcript
+        
+        # Create prompt for Gemini
+        prompt = f"""
+        You are analyzing a game transcript to find examples and key words for each content descriptor.
+
+        CONTENT DESCRIPTORS TO FIND EXAMPLES FOR:
+        {", ".join(flat_descriptors)}
+
+        For each descriptor:
+        1. Identify the 3 most representative SENTENCES from the transcript that best exemplify this descriptor.
+        2. Identify the 3 most representative WORDS from the transcript that best exemplify this descriptor.
+
+
+        Return a JSON object with:
+        - Each descriptor as a key
+        - For each descriptor, provide an object with:
+        - "examples": an array of 3 strings containing complete sentences from the transcript that best exemplify this descriptor
+        - "words": an array of the 3 most representative words that best exemplify this descriptor
+
+        Transcript:
+        {analysis_transcript}
+        """
+        
+        print(f"Finding examples and key words using Gemini (no token limit) for: {', '.join(flat_descriptors)}")
+        
+        # Call Gemini API
+        response = client.models.generate_content(
+            model="gemini-2.0-flash-lite-preview-02-05",
+            contents=prompt
+        )
+        
+        # Parse the response text as JSON - handle markdown code blocks
+        try:
+            # Get the raw text
+            raw_text = response.text
+            
+            # Check if response is wrapped in markdown code blocks
+            if raw_text.strip().startswith("```") and raw_text.strip().endswith("```"):
+                # Extract the JSON content between the code block markers
+                json_content = re.search(r'```(?:json)?(.*?)```', raw_text, re.DOTALL)
+                if json_content:
+                    cleaned_text = json_content.group(1).strip()
+                    result = json.loads(cleaned_text)
+                    return result
+            
+            # Try parsing directly if not in code blocks
+            result = json.loads(raw_text)
+            return result
+            
+        except json.JSONDecodeError as e:
+            print(f"Error parsing JSON response from Gemini: {e}")
+            print("Raw response:", raw_text)
+            
+            # Last-resort manual extraction attempt for the specific format in logs
+            try:
+                if "```json" in raw_text and "```" in raw_text:
+                    # Extract content between markdown code blocks
+                    content = raw_text.split("```json")[1].split("```")[0].strip()
+                    result = json.loads(content)
+                    return result
+            except Exception as ex:
+                print(f"Failed manual extraction attempt: {ex}")
+            
+            return {}
+            
+    except Exception as e:
+        print(f"Error getting descriptor evidence from Gemini: {e}")
+        return {}
+
+# Generate game transcript summary with GPT-4o-mini
+def generate_transcript_summary_with_gpt(client, transcript):
+    """
+    Generate a summary of the game transcript using GPT-4o-mini.
+    
+    Args:
+        client: OpenAI client
+        transcript: The game transcript text
+    
+    Returns:
+        A summary of the game transcript
+    """
+    try:
+        # Truncate transcript if it's too long
+        max_tokens = 25000  # Set a limit for GPT
+        if count_tokens(transcript) > max_tokens:
+            segments = split_transcript(transcript, max_tokens)
+            analysis_transcript = segments[0]
+        else:
+            analysis_transcript = transcript
+        
+        # Create prompt for GPT-4o-mini
+        system_prompt = """You are analyzing a game transcript to create a brief summary.
+        
+The summary should capture the main elements of the game including:
+- The type of game and gameplay
+- The setting and atmosphere
+- Key plot points (if apparent)
+- Notable game mechanics or features
+
+The summary should be plain unstructured text and no more than 100 words.
+"""
+        
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": system_prompt
+                },
+                {
+                    "role": "user",
+                    "content": analysis_transcript
+                }
+            ],
+            temperature=0.0,
+        )
+        
+        # Get the summary from the response
+        summary = response.choices[0].message.content
+        print("GPT summary generated successfully")
+        return summary
+        
+    except Exception as e:
+        print(f"Error generating GPT summary: {e}")
+        # Return a fallback message if GPT API fails
+        return "Game transcript summary unavailable. Analysis was performed using AI-powered content detection."
+
 # Generate game transcript summary with Gemini
-def generate_transcript_summary(transcript):
+def generate_transcript_summary_with_gemini(transcript):
     """
     Generate a summary of the game transcript using Google's Gemini API.
     
@@ -447,14 +683,10 @@ def generate_transcript_summary(transcript):
     """
     try:
         # Initialize the Gemini API client with your API key
-        client = genai.Client(api_key="AIzaSyDQFigX51iCUXDtOke9Q7YtQDJy1_a1ui4")
+        client = genai.Client(api_key="")
         
-        # Truncate transcript if it's too long
-        max_length = 25000  # Approximate character limit for input
-        if len(transcript) > max_length:
-            analysis_transcript = transcript[:max_length] + "..."
-        else:
-            analysis_transcript = transcript
+        # Use full transcript without truncation - Gemini can handle ~1 million tokens
+        analysis_transcript = transcript
         
         # Create the prompt for Gemini
         prompt = f"""
@@ -478,7 +710,7 @@ def generate_transcript_summary(transcript):
         
         # Get the summary from the response
         summary = response.text
-        print("Gemini summary generated successfully")
+        print("Gemini summary generated successfully (no token limit)")
         return summary
         
     except Exception as e:
@@ -626,21 +858,57 @@ Return a JSON object with:
 # API endpoint to analyze transcript
 @app.route('/api/analyze', methods=['POST'])
 def analyze():
-    # Get transcript from request
+    # Get data from request
     data = request.json
     transcript = data.get('transcript', '')
+    model_choice = data.get('model', 'gpt')  # Default to GPT if not specified
+    from_questionnaire = data.get('fromQuestionnaire', False)
+    content_flags = data.get('contentFlags', {}) if from_questionnaire else {}
     
-    if not transcript:
-        return jsonify({'error': 'No transcript provided'}), 400
+    if not transcript and not from_questionnaire:
+        return jsonify({'error': 'No transcript provided and not from questionnaire'}), 400
     
-    # Initialize OpenAI client (make sure OPENAI_API_KEY is set in environment)
+    # Initialize OpenAI client
     client = OpenAI()
     
-    # Step 1: Analyze transcript with GPT
+    # Step 1: Analyze transcript with GPT or use provided content flags
     try:
-        gpt_result = analyze_transcript_with_gpt(client, transcript)
+        if from_questionnaire:
+            # Use content flags directly from questionnaire
+            raw_flags = content_flags
+            
+            # Process questionnaire flags to follow the same hierarchy as GPT flags
+            # This ensures only the strongest descriptor in each category is used
+            processed_flags = filter_content_flags_by_hierarchy(raw_flags)
+            
+            gpt_result = {
+                'content_flags': processed_flags,
+                'predicted_rating': 'E'  # Default value, will be determined by the model
+            }
+        else:
+            # Analyze transcript with GPT
+            gpt_result = analyze_transcript_with_gpt(client, transcript)
+            
+        # Define expected column names
+        expected_columns = [
+            'alcohol_reference', 'animated_blood', 'blood', 'blood_and_gore',
+            'cartoon_violence', 'crude_humor', 'drug_reference', 'fantasy_violence',
+            'intense_violence', 'language', 'lyrics', 'mature_humor', 'mild_blood',
+            'mild_cartoon_violence', 'mild_fantasy_violence', 'mild_language',
+            'mild_lyrics', 'mild_suggestive_themes', 'mild_violence', 'no_descriptors',
+            'nudity', 'partial_nudity', 'sexual_content', 'sexual_themes',
+            'simulated_gambling', 'strong_language', 'strong_sexual_content',
+            'suggestive_themes', 'use_of_alcohol', 'use_of_drugs_and_alcohol',
+            'moderate_violence'
+        ]
+        
+       
+        flags = gpt_result.get('content_flags', {})
+        standardized_flags = {col: flags.get(col, 0) for col in expected_columns}
+        gpt_result['content_flags'] = standardized_flags
+            
     except Exception as e:
-        return jsonify({'error': f'GPT analysis failed: {str(e)}'}), 500
+        return jsonify({'error': f'Analysis failed: {str(e)}'}), 500
     
     # Step 2: Load or train the Random Forest model
     try:
@@ -671,35 +939,48 @@ def analyze():
     # Get active descriptors by category
     active_descriptors = get_active_descriptors_by_category(gpt_result['content_flags'])
     
-    # Get examples and top words for active descriptors
+    # Get descriptor evidence only if not from questionnaire
     descriptor_evidence = {}
-    try:
-        raw_evidence = get_descriptor_examples(client, transcript, active_descriptors)
-        
-        # Process evidence and count word frequencies
-        for descriptor, evidence in raw_evidence.items():
-            word_counts = count_word_occurrences(transcript, evidence.get('words', []))
+    if not from_questionnaire:
+        try:
+            if model_choice == 'gemini':
+                # Use Gemini for evidence collection (no token limit)
+                raw_evidence = get_descriptor_examples_with_gemini(transcript, active_descriptors)
+            else:
+                # Use GPT for evidence collection (with token limit)
+                raw_evidence = get_descriptor_examples_with_gpt(client, transcript, active_descriptors)
             
-            descriptor_evidence[descriptor] = {
-                "examples": evidence.get('examples', []),
-                "topWords": [{"word": word, "count": count} for word, count in word_counts.items()]
-            }
-    except Exception as e:
-        print(f"Error getting descriptor evidence: {e}")
+            # Process evidence and count word frequencies
+            for descriptor, evidence in raw_evidence.items():
+                word_counts = count_word_occurrences(transcript, evidence.get('words', []))
+                
+                descriptor_evidence[descriptor] = {
+                    "examples": evidence.get('examples', []),
+                    "topWords": [{"word": word, "count": count} for word, count in word_counts.items()]
+                }
+        except Exception as e:
+            print(f"Error getting descriptor evidence: {e}")
+
+    # Generate game transcript summary if not from questionnaire
+    if from_questionnaire:
+        transcript_summary = "Rating based on questionnaire responses."
+    else:
+        try:
+            # Always use Gemini for summary generation (no token limit)
+            transcript_summary = generate_transcript_summary_with_gemini(transcript)
+        except Exception as e:
+            print(f"Error generating transcript summary: {e}")
+            transcript_summary = "Game transcript summary unavailable. Analysis was performed using AI-powered content detection."
     
-    # Generate game transcript summary with Gemini
-    try:
-        transcript_summary = generate_transcript_summary(transcript)
-    except Exception as e:
-        print(f"Error generating transcript summary: {e}")
-        transcript_summary = "Game transcript summary unavailable. Analysis was performed using AI-powered content detection."
-    
-    # Print results to console (similar to compare_predictions.py output)
+    # Print results to console
     print("\nTranscript Analysis Results:")
     print("-" * 120)
-    print(f"{'GPT Rating':<12} {'RF Rating':<10} {'Confidence':<10} {'RF Top 2 Decisions':<40}")
+    print(f"{'GPT Rating':<12} {'RF Rating':<10} {'Confidence':<10} {'RF Top 2 Decisions':<40} {'API Model':<10}")
     print("-" * 120)
-    print(f"{gpt_result['predicted_rating']:<12} {rf_rating:<10} {confidence:>7}%  {top2_classes[0]} ({top2_probs[0]:.2f}), {top2_classes[1]} ({top2_probs[1]:.2f})")
+    if from_questionnaire:
+        print(f"{'QUEST':<12} {rf_rating:<10} {confidence:>7}%  {top2_classes[0]} ({top2_probs[0]:.2f}), {top2_classes[1]} ({top2_probs[1]:.2f})  {'QUEST'}")
+    else:
+        print(f"{gpt_result['predicted_rating']:<12} {rf_rating:<10} {confidence:>7}%  {top2_classes[0]} ({top2_probs[0]:.2f}), {top2_classes[1]} ({top2_probs[1]:.2f})  {model_choice.upper()}")
     
     # Print categories, their active descriptors, and extremeness
     for category, descriptors in active_descriptors.items():
@@ -710,7 +991,7 @@ def analyze():
     
     # Construct response object
     response = {
-        'gpt_rating': gpt_result['predicted_rating'],
+        'gpt_rating': gpt_result['predicted_rating'] if not from_questionnaire else 'QUEST',
         'rating': rf_rating,
         'confidence': confidence,
         'top2_classes': top2_classes,
@@ -734,6 +1015,73 @@ def analyze():
     }
     
     return jsonify(response)
+
+# API endpoint to generate focused summaries
+@app.route('/api/summarize', methods=['POST'])
+def summarize():
+    # Get transcript and focus from request
+    data = request.json
+    transcript = data.get('transcript', '')
+    focus_type = data.get('focus', 'gameplay')  # Default to gameplay focus
+    
+    if not transcript:
+        return jsonify({'error': 'No transcript provided'}), 400
+    
+    # Always use Gemini for summarization (as specified)
+    try:
+        # Initialize the Gemini API client
+        client = genai.Client(api_key="")
+        
+        # Define focus-specific prompts
+        focus_prompts = {
+            'gameplay': "Focus specifically on the type of game and gameplay elements. Describe the core gameplay loop, player actions, objectives, and distinctive gameplay features.",
+            'setting': "Focus specifically on the setting and atmosphere. Describe the game world, time period, environment types, atmosphere, and overall aesthetic.",
+            'plot': "Focus specifically on the plot points and narrative. Describe the main storyline, key characters, important events, and narrative themes.",
+            'mechanics': "Focus specifically on the game mechanics and features. Describe the core systems, unique features, player progression, and distinctive gameplay mechanics."
+        }
+        
+        # Get the appropriate focus prompt
+        focus_prompt = focus_prompts.get(focus_type, focus_prompts['gameplay'])
+        
+        # Create full prompt for Gemini
+        prompt = f"""
+        You are a video game content analyst specializing in summarizing game content. 
+        Analyze the following game transcript and create an insightful summary in no more than 250 words.
+        
+        {focus_prompt}
+        
+        Write in clear, informative language that is engaging and professional. 
+        The summary should be comprehensive but concise, highlighting the most important aspects 
+        related to the requested focus.
+        
+        Transcript:
+        {transcript}
+        """
+        
+        # Call Gemini API
+        response = client.models.generate_content(
+            model="gemini-2.0-flash-lite-preview-02-05",
+            contents=prompt
+        )
+        
+        # Get the summary from the response
+        summary = response.text
+        print("Gemini summary generated successfully with focus on", focus_type)
+        print("Raw summary:", summary)  # Print the raw summary for debugging
+    
+        
+        # If summary is empty, provide a fallback
+        if not summary or summary.strip() == '':
+            summary = "Unable to generate a summary for this transcript based on the selected focus. Please try a different focus or provide more content in the transcript."
+        
+        return jsonify({'summary': summary})
+        
+    except Exception as e:
+        print(f"Error generating focused summary: {e}")
+        # Return a fallback message if Gemini API fails
+        return jsonify({
+            'summary': "Unable to generate a summary at this time. The AI service may be temporarily unavailable. Please try again later."
+        })
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
